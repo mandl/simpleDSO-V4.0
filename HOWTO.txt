@@ -1,0 +1,25 @@
+If you get "Comunication error" under Linux:
+
+1/ find XX-permision.rules file - where XX is some number, usually file can be found in /lib/udev/rules.d
+2/ find lines: 
+# usbfs-like devices
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", \
+			MODE="0664"
+
+and change them to
+
+# usbfs-like devices
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", \
+			MODE="0666"
+
+Lines above can be a bit security hole. Therefore one can use recipe below.
+
+Use provided 99-uni-t.rules file and copy it to /lib/udev/rules.d.
+If your DSO has different VID/PID than 5656/0832, then add it to 
+file before copying.
+
+In both cases computer needs restart of udev or restart of whole system. 
+
+
+In case you using Windows, consider installing Zadig utility http://zadig.akeo.ie/
+and use it to install libusb-win. It is way simpler than installing libusb by hand.
