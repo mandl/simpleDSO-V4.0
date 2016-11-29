@@ -390,10 +390,22 @@ class UNI_T_DSO:
 				print "---------------------------------------"					
 				#print type(self.ch1_data["samples"] )
 				#minimun = min(self.ch1_data["samples"])
-				transf = (128 + self.ch1_data["y_offset"])
-				multiplicador = 0.5
-				result = [  (  (x-transf) * multiplicador + transf ) for x in self.ch1_data["samples"]]
-				self.ch1_data["samples"] = result
+				
+				DOT_PER_DIV = 25.0
+				DOTS_TO_CENTER = 128
+				transf = (DOTS_TO_CENTER + self.ch1_data["y_offset"])
+				#multiplicador = 0.5
+				##result = [  (  (x-transf) + 1*DOT_PER_DIV + transf ) for x in self.ch1_data["samples"]]
+				#result = [  eval(  "(x-transf) + 1*DOT_PER_DIV + transf" ) for x in self.ch1_data["samples"]]
+				#self.ch1_data["samples"] = result
+				
+				
+				dotsToVolts = [  (  (x-transf)/DOT_PER_DIV  ) for x in self.ch1_data["samples"]]
+				mathOperation = [  eval( "x * 2+ 1"  ) for x in dotsToVolts]
+				voltsToDots = [  int(x * DOT_PER_DIV +  transf) for x in mathOperation]
+				self.ch1_data["samples"] = voltsToDots
+				
+				
 				#result = [  ((x-(128 + self.ch1_data["y_offset"])) * multiplicador + (128 + self.ch1_data["y_offset"])) for x in self.ch1_data["samples"]]
 				#self.ch1_data["samples"] = result
 				#********************************************************************
