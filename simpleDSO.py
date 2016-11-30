@@ -83,6 +83,7 @@ from ut2XXX import UT2XXX, utils
 #from ut2XXX_definitions import *
 # import graphic classes and utils
 import graphic
+import math_operations
 
 version = "simpleDSO 0.3"
 
@@ -100,6 +101,10 @@ def DSO_thread():
 		
 		# basic init of DSO comunication
 		dso = UT2XXX.UNI_T_DSO()
+		
+		# MAXI: Math basic init 
+		dsoMath = math_operations.Math()
+		
 		# test if device is connected
 		if not dso.is_present:
 			Que_thread2main.put("ERR_NOT_FOUND")
@@ -132,6 +137,14 @@ def DSO_thread():
 				elif msg == "GET_WAVE" and not offline:
 					#print "Msg from main: get wave"
 					dso.get_waveform()
+					
+					# *********************************************
+					# MAXI
+					
+					dso.ch1_data["samples"] = dsoMath.operate( dso.ch1_data, "x * 2+ 1" )
+										
+					# *********************************************
+					
 					Que_thread2main.put("DATA")
 					Que_thread2main.put(dso.ch1_data)
 					
