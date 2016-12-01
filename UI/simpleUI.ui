@@ -147,7 +147,7 @@
      <x>0</x>
      <y>0</y>
      <width>658</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAction">
@@ -199,8 +199,8 @@
    <slot>loadDataFromDso()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>167</x>
-     <y>576</y>
+     <x>175</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -215,8 +215,8 @@
    <slot>loadScreenFromDso()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>480</x>
-     <y>576</y>
+     <x>484</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel">
      <x>326</x>
@@ -231,8 +231,8 @@
    <slot>saveProgramScreen()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>576</y>
+     <x>638</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel">
      <x>537</x>
@@ -279,8 +279,8 @@
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>397</x>
-     <y>566</y>
+     <x>484</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel">
      <x>77</x>
@@ -295,8 +295,8 @@
    <slot>saveDataToCSV()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>240</x>
-     <y>565</y>
+     <x>329</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel">
      <x>292</x>
