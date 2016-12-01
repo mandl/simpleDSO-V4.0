@@ -84,6 +84,7 @@ from ut2XXX import UT2XXX, utils
 # import graphic classes and utils
 import graphic
 import math_operations
+import copy				# Used for deep object copy
 
 version = "simpleDSO 0.3"
 
@@ -102,7 +103,7 @@ def DSO_thread():
 		# basic init of DSO comunication
 		dso = UT2XXX.UNI_T_DSO()
 		
-		# MAXI: Math basic init 
+		# MAXI: Math basic init for wave mathematical operations
 		dsoMath = math_operations.Math()
 		
 		# test if device is connected
@@ -141,16 +142,27 @@ def DSO_thread():
 					# *********************************************
 					# MAXI
 					
-					dso.ch1_data["samples"] = dsoMath.operate( dso.ch1_data, "x * 2+ 1" )
-										
+					#F1_data = dso.ch2_data												# Not a good idea. Use deepcopy
+					F1_data = copy.deepcopy(dso.ch2_data)								# Deep object copy 
+					F1_data["samples"] = dsoMath.operate( F1_data, "x * 2 + 1" )
+					#F1_data["samples"] = dsoMath.operate( F1_data, "self.seno(x)" )
+				
 					# *********************************************
 					
 					Que_thread2main.put("DATA")
+					
 					Que_thread2main.put(dso.ch1_data)
 					
+					
 					print dso.ch1_data                     #MAXI: AQUI PUEDE VERSE TODO EL DICCIONARIO CON LOS DATOS
+					print " ---------------------------------------------------------------------------------"
+					print dso.ch2_data
+					print " ---------------------------------------------------------------------------------"
+					print F1_data
 					
 					Que_thread2main.put(dso.ch2_data)
+					Que_thread2main.put(F1_data)  #MAXI
+					
 					Que_thread2main.put(dso.data_raw)
 					#print "Data send."
 				elif msg == "SAVE_SCREENSHOT" and not offline:
@@ -280,8 +292,12 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 			if msg == "DATA":
 				self.ch1_data = Que_thread2main.get()
 				self.ch2_data = Que_thread2main.get()
+				self.F1_data  = Que_thread2main.get()
 				self.data_raw = Que_thread2main.get()
-				self.scene.updateScreen(self.ch1_data, self.ch2_data)
+				
+				#self.scene.updateScreen(self.ch1_data, self.ch2_data )
+				self.scene.updateScreen(self.ch1_data, self.ch2_data,  self.F1_data  ) # MAXI: Added a F1 function
+				
 			
 			if msg == "ERR_NOT_FOUND":
 				QtGui.QMessageBox.critical(self, u"Error", u"UNI-T DSO  not found. This error is cricital.\nTurn on DSO and connect it with PC by USB cable. Then run program again.")

@@ -15,6 +15,8 @@ from PyQt4.QtCore import *
 
 from ut2XXX import utils
 
+#import math_operations
+
 
 # main scene class with prerendered grid
 
@@ -22,6 +24,10 @@ class DSO_Scene(QGraphicsScene):
 	
 	def __init__(self):
 		QGraphicsScene.__init__(self, 0,0,540,440)
+		
+		
+		# Creo objeto matematica
+		#self.mathem = math_operations()
 		
 		# we want black background
 		bg = QBrush()
@@ -37,11 +43,17 @@ class DSO_Scene(QGraphicsScene):
 		self.ch2_cursor = DSO_cursor(self, "2", Qt.yellow, "Y")
 		self.chX_cursor = DSO_cursor(self, "T", Qt.red, "X")
 		
+		self.F1_cursor = DSO_cursor(self, "F1", Qt.magenta, "Y")
+		
 		# create text boxes to show V/div s/div 
 		self.ch1_range = DSO_range(self, "CH1", Qt.cyan)
 		self.ch1_range.setPos(20,430)
 		self.ch2_range = DSO_range(self, "CH2", Qt.yellow)
 		self.ch2_range.setPos(195,430)
+		
+		self.F1_range = DSO_range(self, "F1", Qt.magenta)
+		self.F1_range.setPos(195,430)
+		
 		self.time_range = DSO_range(self, "TIME", Qt.white)
 		self.time_range.setPos(370,430)
 		self.time_offset = DSO_range(self, "Pos:", Qt.black, Qt.white)
@@ -53,13 +65,21 @@ class DSO_Scene(QGraphicsScene):
 		self.wave2 = DSO_wave(self, Qt.yellow)
 		self.wave2.hide()
 		
+		self.waveF1 = DSO_wave(self, Qt.magenta)
+		self.waveF1.hide()
+		
 		# finally update screen
 		self.update()
 		
 		self.pixmap = QGraphicsPixmapItem(None, self)
 		
-	def updateScreen(self, ch1_data, ch2_data):
+	def updateScreen(self, ch1_data, ch2_data, F1_data):
+	#def updateScreen(self, ch1_data,  ch2_data):
+		
+		
 		self.grid.show()
+		
+		
 		if ch1_data["active"]:
 			self.wave1.repaint(ch1_data["samples"])
 			self.ch1_cursor.setP(2*(106-ch1_data["y_offset"]))
@@ -73,6 +93,8 @@ class DSO_Scene(QGraphicsScene):
 			self.ch1_cursor.hide()
 			self.ch1_range.setText("CH1: OFF")
 				
+		
+				
 		if ch2_data["active"]:	
 			self.wave2.repaint(ch2_data["samples"])	
 			self.ch2_cursor.setP(2*(106-ch2_data["y_offset"]))
@@ -85,6 +107,40 @@ class DSO_Scene(QGraphicsScene):
 			self.wave2.hide()
 			self.ch2_cursor.hide()
 			self.ch2_range.setText("CH2: OFF")
+		
+		
+		
+		#F1_data = ch2_data
+		F1_data["active"] = True
+		##F1_data["y_offset"] = 10
+		#equation = "x * 2 + 1"
+		#self.DOT_PER_DIV = 25.0			# pixels or dots per scope division 
+		#self.DOTS_TO_CENTER = 128
+		#transf = (self.DOTS_TO_CENTER + F1_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
+		#dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in F1_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
+		#mathOperation = [  eval(  equation  ) for x in dotsToVolts]							# Operate mathematically on each element
+		#voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]
+		#F1_data["samples"] = voltsToDots
+			
+			
+			
+			
+		if F1_data["active"]:	
+			self.waveF1.repaint(F1_data["samples"])	
+			self.F1_cursor.setP(2*(106-F1_data["y_offset"]))
+			self.F1_cursor.show()
+			bw_lim = ""
+			if F1_data["Bw_limit"]:
+				bw_lim = ", Bw"
+			self.F1_range.setText("CH2: "+str(F1_data["V_div"])+"V/div, "+F1_data["couple"]+bw_lim)
+		else:
+			self.waveF1.hide()
+			self.F1_cursor.hide()
+			self.F1_range.setText("CH2: OFF")
+		
+
+		
+		
 		
 		print "Debug:",ch1_data["x_offset"]
 		print "Debug:",ch2_data["x_offset"]

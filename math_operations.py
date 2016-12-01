@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Math.py
 #  
+#
+import math
+
 class Math:
 
 	# init
@@ -26,3 +28,6 @@ class Math:
 		
 		return voltsToDots
 					
+	def seno(self,x):
+		return math.sin(x)
+		
