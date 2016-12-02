@@ -94,7 +94,8 @@ Que_main2thread = Queue.Queue()
 Que_thread2main = Queue.Queue()
 
 # thread of DSO class
-def DSO_thread(equationF1):
+#def DSO_thread(equationF1):
+def DSO_thread():
 	
 	try:
 		want_run = True
@@ -120,7 +121,10 @@ def DSO_thread(equationF1):
 		while want_run:
 			loop += 1
 			try:
-				msg = Que_main2thread.get_nowait()
+				msg = Que_main2thread.get_nowait()				
+				eqF1 = Que_main2thread.get_nowait()				# Store F1 wave transformation function
+			
+				
 			except:
 				pass
 			else:
@@ -144,8 +148,11 @@ def DSO_thread(equationF1):
 					
 					#F1_data = dso.ch2_data												# Not a good idea. Use deepcopy
 					F1_data = copy.deepcopy(dso.ch2_data)								# Deep object copy 
-					F1_data["samples"] = dsoMath.operate( F1_data, equationF1)
-					#F1_data["samples"] = dsoMath.operate( F1_data, "self.seno(x)" )
+					
+					if (eqF1 == "x" ):													# If not transformation (x = x):
+						F1_data["samples"] = dsoMath.operate( F1_data, "x - x + 1")		# To show in screen a little up from ch2_data
+					else:
+						F1_data["samples"] = dsoMath.operate( F1_data, eqF1 )			# Make the transformation
 				
 					# *********************************************
 					
@@ -210,14 +217,18 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 	def __init__(self):
 		QtGui.QMainWindow.__init__(self)
 		
+		
+		
 		print "Inf: DSO remote app is starting ..."
 		self.setupUi(self)
 		print "Inf: DSO remote app started."
 		
-		self.eqF1 = "x * 2 +1" #MAXI
-		#self.dso_thread = threading.Thread(target=DSO_thread)
-		#self.dso_thread = threading.Thread(target=DSO_thread, kwargs={'x': "SOY Maxi",'y': "Yo Lucas"} )
-		self.dso_thread = threading.Thread(target=DSO_thread, kwargs={'equationF1': self.eqF1} ) #MAXI
+		self.F1 = "x" 							#Default definition of F1 wave transformation function
+		
+		print "LA ECUACION en DSO_Main:"
+		print self.F1
+		
+		self.dso_thread = threading.Thread(target=DSO_thread) 
 		self.dso_thread.start()
 				
 		self.scene = graphic.DSO_Scene()
@@ -227,6 +238,7 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 		
 		# autoupdate timer
 		self.auto_timer = QtCore.QTimer()
+		
 		#self.auto_timer.start(1000)
 		self.connect(self.auto_timer, QtCore.SIGNAL("timeout()"), self.updateScreen)
 		
@@ -235,9 +247,8 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 		self.timer.start(10)
 		self.connect(self.timer, QtCore.SIGNAL("timeout()"), self.updateState)
 		
-		#self.ui.lineEdit.textChanged.connect(self.updateEq) #MAXI
-		#self.simpleUI.pushButton_5.clicked.connect(self.updateEq) #MAXI
-		#self.connect(simpleUI.pushButton_5, QtCore.SIGNAL('clicked()'), self.updateEq)
+		# Events
+		self.pushButton_5.clicked.connect(self.updateEq) #MAXI
 		
 		self.updateScreen()
 		
@@ -247,7 +258,9 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 
 
 	def updateEq(self):
-		self.eqF1 = "x "
+		print self.F1 
+		self.F1 = "x+2"
+		
 		
 	def reconnect(self):
 		#if self.dso_thread.isAlive():
@@ -269,6 +282,7 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 	def updateScreen(self):
 		if Que_main2thread.empty():
 			Que_main2thread.put("GET_WAVE")
+			Que_main2thread.put(self.F1)
 		
 	def saveScreenshot2png(self, data):
 		
