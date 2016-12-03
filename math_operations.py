@@ -27,7 +27,29 @@ class Math:
 		voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]		# Antitransform: Volts to dots or pixels
 		
 		return voltsToDots
-					
-	def seno(self,x):
-		return math.sin(x)
+
+
+# Add any mathematical function:					
+
+def sin(x):
+	return math.sin(x)
+
+def cos(x):
+	return math.cos(x)
+
+def tan(x):
+	return math.tan(x)
 		
+def sqrt(x):
+	return math.sqrt(x)
+
+def abs(x):						# Absolut number
+	return math.fabs(x)
+
+def exp(x):						
+	return math.exp(x)
+
+def pow(x,y):
+	return math.pow(x, y)
+
+

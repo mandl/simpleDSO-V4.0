@@ -259,7 +259,7 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 
 	def updateEq(self):
 		print self.F1 
-		self.F1 = "x+2"
+		self.F1 = "sqrt(x)"
 		
 		
 	def reconnect(self):
@@ -282,7 +282,7 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 	def updateScreen(self):
 		if Que_main2thread.empty():
 			Que_main2thread.put("GET_WAVE")
-			Que_main2thread.put(self.F1)
+			Que_main2thread.put(self.F1)	#MAXI
 		
 	def saveScreenshot2png(self, data):
 		
