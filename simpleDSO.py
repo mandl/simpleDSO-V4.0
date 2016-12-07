@@ -103,7 +103,7 @@ def DSO_thread():
 		
 		# basic init of DSO comunication
 		dso = UT2XXX.UNI_T_DSO()
-		
+				
 		# MAXI: Math basic init for wave mathematical operations
 		dsoMath = math_operations.Math()
 		
@@ -147,7 +147,7 @@ def DSO_thread():
 					# MAXI
 					
 					#F1_data = dso.ch2_data												# Not a good idea. Use deepcopy
-					F1_data = copy.deepcopy(dso.ch2_data)								# Deep object copy 
+					F1_data = copy.deepcopy(dso.ch2_data)								# Deep object copy. Using ch2_data as template
 					
 					if (eqF1 == "x" ):													# If not transformation (x = x):
 						F1_data["samples"] = dsoMath.operate( F1_data, "x - x + 1")		# To show in screen a little up from ch2_data
@@ -165,7 +165,7 @@ def DSO_thread():
 					print " ---------------------------------------------------------------------------------"
 					print dso.ch2_data
 					print " ---------------------------------------------------------------------------------"
-					print F1_data
+					#print F1_data
 					
 					Que_thread2main.put(dso.ch2_data)
 					Que_thread2main.put(F1_data)  #MAXI
@@ -259,7 +259,8 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 
 	def updateEq(self):
 		print self.F1 
-		self.F1 = "sqrt(x)"
+		#self.F1 = "sqrt(x)"
+		self.F1 = "int(x)"
 		
 		
 	def reconnect(self):

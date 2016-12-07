@@ -16,31 +16,17 @@ class Math:
 		
 		self.DOT_PER_DIV = 25.0			# pixels or dots per scope division 
 		self.DOTS_TO_CENTER = 128		# Dot o pixel quantity until center line in vertical direction (Y), in other words, from bottom to center
-		self.X_DIV = 10					# Number of screen divisions in X
-		self.Y_DIV = 8		 			# Number of screen divisions in Y
-		
-		self.WORD_INT = "int"
-		
+	
 
 		
 	def operate(self, ch_data, equation = ""):
 		
-		if self.WORD_INT in equation:
-			self.acumulated = 0
-			self.delta_t = (ch_data ["s_div"] * self.X_DIV )  /  len(ch_data["samples"])
-			equation.replace("int", "integrate")
-			print "LA EQU ES....", equation.replace("int", "integrate")
-		
-		equation = "sqrt(x)"
 		transf = (self.DOTS_TO_CENTER + ch_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
 		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in ch_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
 		mathOperation = [  eval(  equation  ) for x in dotsToVolts]							# Operate mathematically on each element
 		voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]		# Antitransform: Volts to dots or pixels
 		
 		return voltsToDots
-		
-	
-		
 
 
 # Add any mathematical function:					
