@@ -21,33 +21,82 @@ class Math:
 		
 		self.WORD_INT = "int"
 		
+		
 
 		
-	def operate(self, ch_data, equation = ""):
+	def operate(self, ch_data, ch1_data, ch2_data, equation = ""):
+		""" This function perform all mathematical operations introduced
+		by the user. Integration and derivation need some code here"""
 		
+		self.ch1_data = ch1_data
+		self.ch2_data = ch2_data
+		
+		# Used for integration
 		if self.WORD_INT in equation:
 			self.accum = 0																	# accumulate sum of integration
 			self.delta_t = (ch_data ["s_div"] * self.X_DIV )  /  len(ch_data["samples"])
 			equation = equation.replace(self.WORD_INT , "self.integrate")
-			
 		
+		#If ch1 is used in equation. Allow different ways of writing 
+		if ("ch1") in equation:	
+			equation = equation.replace("ch1" , "self.ch1(idx)")
+		elif ("Ch1") in equation:	
+			equation = equation.replace("Ch1" , "self.ch1(idx)")
+		elif ("CH1") in equation:	
+			equation = equation.replace("CH1" , "self.ch1(idx)")
+		elif ("cH1") in equation:	
+			equation = equation.replace("cH1" , "self.ch1(idx)")
+	
+		#If ch2 is used in equation. Allow different ways of writing
+		if ("ch2") in equation:	
+			equation = equation.replace("ch2" , "self.ch2(idx)")
+		elif ("Ch2") in equation:	
+			equation = equation.replace("Ch2" , "self.ch2(idx)")
+		elif ("CH2") in equation:	
+			equation = equation.replace("CH2" , "self.ch2(idx)")
+		elif ("cH2") in equation:
+			equation = equation.replace("cH2" , "self.ch2(idx)")		
+
 		#equation = "sqrt(x)"
+		# Start of performing mathematical operations 
 		transf = (self.DOTS_TO_CENTER + ch_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
+		
 		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in ch_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
-		mathOperation = [  eval(  equation  ) for x in dotsToVolts]							# Operate mathematically on each element
+		
+		#mathOperation = [  eval(  equation  ) for x in dotsToVolts]							# Operate mathematically on each element
+		mathOperation = [  eval(  equation  ) for idx, x in enumerate(dotsToVolts)]			# Adding "enumerate" allow us to access to index number "idx"
+		#mathOperation = [  eval("self.ch1(idx)") for idx, x in dotsToVolts]
+		
 		voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]		# Antitransform: Volts to dots or pixels
-		print "dotsToVolts:"
-		print  mathOperation
-		print ""
-		print "VIOLETA:"
-		print  voltsToDots
+		
 		return voltsToDots
-		self.accum = 0	
+	
 		
 		
 	def integrate(self, x ):
-		self.accum = self.accum + (x*self.delta_t*1000)
+		self.accum = self.accum + (x*self.delta_t*1000) # ATENCIOONNN!!!! HAY QUE SACAR EL 1000
+		
 		return self.accum 
+		
+		
+	def ch1(self,idx):	
+		""" Transforms from dot to volts and returns the ch1 value solicitated by the index"""
+		
+		transf = (self.DOTS_TO_CENTER + self.ch1_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
+		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in self.ch1_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
+		
+		return dotsToVolts[idx]
+	
+	
+	def ch2(self,idx):	
+		""" Transforms from dot to volts and returns the ch2 value solicitated by the index"""
+		
+		transf = (self.DOTS_TO_CENTER + self.ch2_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
+		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in self.ch2_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
+		
+		return dotsToVolts[idx]
+		
+		
 		
 		
 	

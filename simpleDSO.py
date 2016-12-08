@@ -146,13 +146,13 @@ def DSO_thread():
 					# *********************************************
 					# MAXI
 					
-					#F1_data = dso.ch2_data												# Not a good idea. Use deepcopy
-					F1_data = copy.deepcopy(dso.ch1_data)								# Deep object copy. Using ch2_data as template
+					#F1_data = dso.ch2_data																			# Not a good idea. Use deepcopy
+					F1_data = copy.deepcopy(dso.ch1_data)															# Deep object copy. Using ch2_data as template
 					
-					if (eqF1 == "x" ):													# If not transformation (x = x):
-						F1_data["samples"] = dsoMath.operate( F1_data, "x - x + 1")		# To show in screen a little up from ch2_data
+					if (eqF1 == "x" ):																				# If not transformation (x = x):
+						F1_data["samples"] = dsoMath.operate( F1_data, dso.ch1_data, dso.ch2_data, "x - x + 1")		# To show in screen a little up from ch2_data
 					else:
-						F1_data["samples"] = dsoMath.operate( F1_data, eqF1 )			# Make the transformation
+						F1_data["samples"] = dsoMath.operate( F1_data, dso.ch1_data, dso.ch2_data,  eqF1 )			# Make the transformation
 						#F1_data["V_div"] = 0.05
 				
 					# *********************************************
@@ -261,7 +261,7 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 	def updateEq(self):
 		print self.F1 
 		#self.F1 = "sqrt(x)"
-		self.F1 = "int(x)"
+		self.F1 = "int(ch2+1)"
 		
 		
 	def reconnect(self):
