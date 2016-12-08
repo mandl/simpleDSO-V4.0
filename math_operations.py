@@ -26,18 +26,29 @@ class Math:
 	def operate(self, ch_data, equation = ""):
 		
 		if self.WORD_INT in equation:
-			self.acumulated = 0
+			self.accum = 0																	# accumulate sum of integration
 			self.delta_t = (ch_data ["s_div"] * self.X_DIV )  /  len(ch_data["samples"])
-			equation.replace("int", "integrate")
-			print "LA EQU ES....", equation.replace("int", "integrate")
+			equation = equation.replace(self.WORD_INT , "self.integrate")
+			
 		
-		equation = "sqrt(x)"
+		#equation = "sqrt(x)"
 		transf = (self.DOTS_TO_CENTER + ch_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
 		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in ch_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
 		mathOperation = [  eval(  equation  ) for x in dotsToVolts]							# Operate mathematically on each element
 		voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]		# Antitransform: Volts to dots or pixels
-		
+		print "dotsToVolts:"
+		print  mathOperation
+		print ""
+		print "VIOLETA:"
+		print  voltsToDots
 		return voltsToDots
+		self.accum = 0	
+		
+		
+	def integrate(self, x ):
+		self.accum = self.accum + (x*self.delta_t*1000)
+		return self.accum 
+		
 		
 	
 		

@@ -147,12 +147,13 @@ def DSO_thread():
 					# MAXI
 					
 					#F1_data = dso.ch2_data												# Not a good idea. Use deepcopy
-					F1_data = copy.deepcopy(dso.ch2_data)								# Deep object copy. Using ch2_data as template
+					F1_data = copy.deepcopy(dso.ch1_data)								# Deep object copy. Using ch2_data as template
 					
 					if (eqF1 == "x" ):													# If not transformation (x = x):
 						F1_data["samples"] = dsoMath.operate( F1_data, "x - x + 1")		# To show in screen a little up from ch2_data
 					else:
 						F1_data["samples"] = dsoMath.operate( F1_data, eqF1 )			# Make the transformation
+						#F1_data["V_div"] = 0.05
 				
 					# *********************************************
 					
