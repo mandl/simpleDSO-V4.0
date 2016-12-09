@@ -4,7 +4,6 @@
 #  
 #
 import math
-import numpy
 
 class Math:
 
@@ -16,7 +15,7 @@ class Math:
 		zero (Dot) is at bottom (Not at middle of screen as indicated by common sense)"""
 		
 		self.DOT_PER_DIV = 25.0			# pixels or dots per scope division 
-		self.DOTS_TO_CENTER = 128		# 117.5 Dot o pixel quantity until center line in vertical direction (Y), in other words, from bottom to center
+		self.DOTS_TO_CENTER = 128		# Dot o pixel quantity until center line in vertical direction (Y), in other words, from bottom to center
 		self.X_DIV = 10					# Number of screen divisions in X
 		self.Y_DIV = 8		 			# Number of screen divisions in Y
 		
@@ -31,16 +30,12 @@ class Math:
 		
 		self.ch1_data = ch1_data
 		self.ch2_data = ch2_data
-		self.array = []
 		
 		# Used for integration
 		if self.WORD_INT in equation:
-			self.accum = 0.0																	# accumulate sum of integration
-			#self.accum = numpy.float128(0.0)
+			self.accum = 0																	# accumulate sum of integration
 			self.delta_t = (ch_data ["s_div"] * self.X_DIV )  /  len(ch_data["samples"])
 			equation = equation.replace(self.WORD_INT , "self.integrate")
-			print "DIV de TIEMPO"
-			print ch_data ["s_div"] 
 		
 		#If ch1 is used in equation. Allow different ways of writing 
 		if ("ch1") in equation:	
@@ -66,41 +61,29 @@ class Math:
 		# Start of performing mathematical operations 
 		transf = (self.DOTS_TO_CENTER + ch_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
 		
-		#dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in ch_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
-		dotsToVolts = [  (  ((x-transf)/self.DOT_PER_DIV) * ch_data["V_div"]  ) for x in ch_data["samples"]]  # Transform dots to real volts to avoid mistakes in debugging
-		
-		print dotsToVolts
+		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in ch_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
 		
 		#mathOperation = [  eval(  equation  ) for x in dotsToVolts]							# Operate mathematically on each element
 		mathOperation = [  eval(  equation  ) for idx, x in enumerate(dotsToVolts)]			# Adding "enumerate" allow us to access to index number "idx"
+		#mathOperation = [  eval("self.ch1(idx)") for idx, x in dotsToVolts]
 		
-		#voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]		# Antitransform: Volts to dots or pixels
-		voltsToDots = [  int( (x/ch_data["V_div"]) * self.DOT_PER_DIV +  transf) for x in mathOperation]
+		voltsToDots = [  int(x * self.DOT_PER_DIV +  transf) for x in mathOperation]		# Antitransform: Volts to dots or pixels
 		
 		return voltsToDots
 	
 		
 		
 	def integrate(self, x ):
-		print x
+		self.accum = self.accum + (x*self.delta_t*1000) # ATENCIOONNN!!!! HAY QUE SACAR EL 1000
 		
-		#Metodo del trapecio con numpy
-		self.array.extend([x])
-		self.accum = numpy.trapz(self.array, dx=self.delta_t)
-		
-		#Metodo mio
-		#self.accum = self.accum + (x * self.delta_t * 10000 ) # ATENCIOONNN!!!! HAY QUE SACAR EL 1000
-		#print self.accum
-		#return self.accum 
-		
-		return self.accum*10000
+		return self.accum 
 		
 		
 	def ch1(self,idx):	
 		""" Transforms from dot to volts and returns the ch1 value solicitated by the index"""
 		
 		transf = (self.DOTS_TO_CENTER + self.ch1_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
-		dotsToVolts = [  (  ((x-transf)/self.DOT_PER_DIV) * self.ch1_data["V_div"]    ) for x in self.ch1_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
+		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in self.ch1_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
 		
 		return dotsToVolts[idx]
 	
@@ -109,7 +92,7 @@ class Math:
 		""" Transforms from dot to volts and returns the ch2 value solicitated by the index"""
 		
 		transf = (self.DOTS_TO_CENTER + self.ch2_data["y_offset"])								# Calculate the real center of the wave expressed in dots or pixels
-		dotsToVolts = [  (  ((x-transf)/self.DOT_PER_DIV)  * self.ch2_data["V_div"]   ) for x in self.ch2_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
+		dotsToVolts = [  (  (x-transf)/self.DOT_PER_DIV  ) for x in self.ch2_data["samples"]]		# Transform dots to real volts to avoid mistakes in debugging
 		
 		return dotsToVolts[idx]
 		

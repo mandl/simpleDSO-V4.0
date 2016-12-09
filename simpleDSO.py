@@ -261,7 +261,7 @@ class DSO_main(QtGui.QMainWindow, simpleUI.Ui_MainWindow):
 	def updateEq(self):
 		print self.F1 
 		#self.F1 = "sqrt(x)"
-		self.F1 = "int(ch2+1)"
+		self.F1 = "int(ch1-0.1)"
 		
 		
 	def reconnect(self):
